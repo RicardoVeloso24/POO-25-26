@@ -17,26 +17,26 @@ public class MenuUtilizador {
         this.user = user;
         this.facade = facade;
 
-        System.out.println("Bem-vindo " + this.user.getUserID() + " !");
-
         this.menu = new TextUI("Menu Utilizador", new String[]{
                 "Registar Nova Casa",
                 "Listar Casas do Utilizador",
-                "Listar Casas Administradas"
+                "Listar Casas Administradas",
+                "Gerir uma Casa"
         });
 
         this.menu.setHandler(1, this::registar_casa);
         this.menu.setHandler(2, this::listar_casas_utilizador);
         this.menu.setHandler(3, this::listar_casas_administradas);
+        this.menu.setHandler(4, this::abrir_menu_gestao_casa);
 
         this.menu.run();
     }
 
     public void registar_casa() {
-        System.out.print("ID da Casa: ");
-        String idCasa = scanner.nextLine();
+        System.out.print("Nome da Casa: ");
+        String nomeCasa = scanner.nextLine();
 
-        boolean ok = this.facade.registarCasa(this.user.getUserID(), idCasa);
+        boolean ok = this.facade.registarCasa(this.user.getUserID(), nomeCasa);
 
         if (ok) {
             System.out.println("Casa registada com sucesso.");
@@ -46,14 +46,14 @@ public class MenuUtilizador {
     }
 
     public void listar_casas_utilizador() {
-        String[] casas = this.facade.getcasasIdUtilizador(this.user.getUserID());
+        String[] casas = this.facade.getcasasInfoUtilizador(this.user.getUserID());
 
         if (casas.length == 0) {
             System.out.println("O utilizador não tem casas associadas.");
             return;
         }
 
-        System.out.println("Casas do utilizador:");
+        System.out.println("Casas do utilizador " + this.user.getUserID() + ":");
         for (String casa : casas) {
             System.out.println("- " + casa);
         }
@@ -71,5 +71,38 @@ public class MenuUtilizador {
         for (String casa : casas) {
             System.out.println("- " + casa);
         }
+    }
+
+    public void abrir_menu_gestao_casa() {
+        String[] casasInfo = this.facade.getcasasInfoUtilizador(this.user.getUserID());
+        String[] casasIds = this.facade.getcasasIdUtilizador(this.user.getUserID());
+
+        if (casasIds.length == 0) {
+            System.out.println("O utilizador não tem casas para gerir.");
+            return;
+        }
+
+        System.out.println("Casas disponíveis:");
+        for (String casa : casasInfo) {
+            System.out.println("- " + casa);
+        }
+
+        System.out.print("Indique o ID da casa que pretende gerir: ");
+        String idCasa = scanner.nextLine().trim();
+
+        boolean existe = false;
+        for (String casaId : casasIds) {
+            if (casaId.equalsIgnoreCase(idCasa)) {
+                existe = true;
+                break;
+            }
+        }
+
+        if (!existe) {
+            System.out.println("Casa inválida.");
+            return;
+        }
+
+        new MenuGestaoCasa(this.user, this.facade, idCasa);
     }
 }

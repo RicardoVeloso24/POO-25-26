@@ -4,9 +4,9 @@ import Dispositivos.Dispositivo;
 
 public interface DomusControlCriacao {
      boolean registarCasa(String userID, String idCasa);
-     boolean adicionarDivisaoACasa(String idCasa, String idDivisao, String nomeDivisao);
-
-     String[] getcasasIdUtilizador(String userID);
+     boolean adicionarDivisaoACasa(String idCasa, String nomeDivisao);
+     public String[] getcasasIdUtilizador(String userID);
+     public String[] getcasasInfoUtilizador(String userID);
      String[] getcasasIdAdministrativas(String userID);
 
      String[] getIdsDivisoesCasa(String idCasa);

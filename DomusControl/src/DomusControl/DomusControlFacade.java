@@ -67,8 +67,8 @@ public class DomusControlFacade implements DomusControlLogin, DomusControlCriaca
         return null;
     }
 
-    public boolean registarCasa(String userID, String idCasa) {
-        if (userID == null || idCasa == null) {
+    public boolean registarCasa(String userID, String nomeCasa) {
+        if (userID == null || nomeCasa == null) {
             return false;
         }
 
@@ -77,42 +77,36 @@ public class DomusControlFacade implements DomusControlLogin, DomusControlCriaca
             return false;
         }
 
-        idCasa = idCasa.trim().toUpperCase();
+        nomeCasa = nomeCasa.trim();
 
-        if (idCasa.isEmpty() || this.casas.containsKey(idCasa)) {
+        if (nomeCasa.isEmpty()) {
             return false;
         }
 
-        Casa novaCasa = new Casa(idCasa);
-        this.casas.put(idCasa, novaCasa);
+        Casa novaCasa = new Casa(nomeCasa);
+        this.casas.put(novaCasa.getIdCasa(), novaCasa);
         utilizador.adicionarCasaAdministrada(novaCasa);
         utilizador.adicionarCasaUtilizador(novaCasa);
 
         return true;
     }
 
-    public boolean adicionarDivisaoACasa(String idCasa, String idDivisao, String nomeDivisao) {
-        if (idCasa == null || idDivisao == null || nomeDivisao == null) {
+    public boolean adicionarDivisaoACasa(String idCasa, String nomeDivisao) {
+        if (idCasa == null || nomeDivisao == null) {
             return false;
         }
 
-        Casa casa = this.casas.get(idCasa.trim().toUpperCase());
+        Casa casa = this.casas.get(idCasa.trim());
         if (casa == null) {
             return false;
         }
 
-        idDivisao = idDivisao.trim().toUpperCase();
         nomeDivisao = nomeDivisao.trim();
-
-        if (idDivisao.isEmpty() || nomeDivisao.isEmpty()) {
+        if (nomeDivisao.isEmpty()) {
             return false;
         }
 
-        if (casa.existeDivisao(idDivisao)) {
-            return false;
-        }
-
-        Divisao novaDivisao = new Divisao(idDivisao, nomeDivisao);
+        Divisao novaDivisao = new Divisao(nomeDivisao);
         return casa.adicionarDivisao(novaDivisao);
     }
 
@@ -121,7 +115,7 @@ public class DomusControlFacade implements DomusControlLogin, DomusControlCriaca
             return null;
         }
 
-        Casa casa = this.casas.get(idCasa.trim().toUpperCase());
+        Casa casa = this.casas.get(idCasa.trim());
         return casa == null ? null : casa.clone();
     }
 
@@ -130,7 +124,7 @@ public class DomusControlFacade implements DomusControlLogin, DomusControlCriaca
             return new String[0];
         }
 
-        Casa casa = this.casas.get(idCasa.trim().toUpperCase());
+        Casa casa = this.casas.get(idCasa.trim());
         if (casa == null) {
             return new String[0];
         }
@@ -140,17 +134,55 @@ public class DomusControlFacade implements DomusControlLogin, DomusControlCriaca
                 .toArray(new String[0]);
     }
 
+    public String[] getDispositivosInfoDivisao(String idCasa, String idDivisao) {
+        if (idCasa == null || idDivisao == null) {
+            return new String[0];
+        }
+
+        Casa casa = this.casas.get(idCasa.trim());
+        if (casa == null) {
+            return new String[0];
+        }
+
+        Divisao divisao = casa.getDivisao(idDivisao.trim());
+        if (divisao == null) {
+            return new String[0];
+        }
+
+        return divisao.getDispositivos()
+                .stream()
+                .map(d -> d.getIdentificador() + " - " + d.getMarca() + " " + d.getModelo())
+                .toArray(String[]::new);
+    }
+
+    public String[] getDivisoesInfoCasa(String idCasa) {
+        if (idCasa == null) {
+            return new String[0];
+        }
+
+        Casa casa = this.casas.get(idCasa.trim());
+        if (casa == null) {
+            return new String[0];
+        }
+
+        return casa.getDivisoes()
+                .values()
+                .stream()
+                .map(d -> d.getIdDivisao() + " - " + d.getNome_comum_divisao())
+                .toArray(String[]::new);
+    }
+
     public boolean adicionarDispositivoADivisao(String idCasa, String idDivisao, Dispositivo dispositivo) {
         if (idCasa == null || idDivisao == null || dispositivo == null) {
             return false;
         }
 
-        Casa casa = this.casas.get(idCasa.trim().toUpperCase());
+        Casa casa = this.casas.get(idCasa.trim());
         if (casa == null) {
             return false;
         }
 
-        Divisao divisao = casa.getDivisaoInterna(idDivisao.trim().toUpperCase());
+        Divisao divisao = casa.getDivisaoInterna(idDivisao.trim());
         if (divisao == null) {
             return false;
         }
@@ -163,12 +195,12 @@ public class DomusControlFacade implements DomusControlLogin, DomusControlCriaca
             return new String[0];
         }
 
-        Casa casa = this.casas.get(idCasa.trim().toUpperCase());
+        Casa casa = this.casas.get(idCasa.trim());
         if (casa == null) {
             return new String[0];
         }
 
-        Divisao divisao = casa.getDivisao(idDivisao.trim().toUpperCase());
+        Divisao divisao = casa.getDivisao(idDivisao.trim());
         if (divisao == null) {
             return new String[0];
         }
@@ -184,17 +216,17 @@ public class DomusControlFacade implements DomusControlLogin, DomusControlCriaca
             return false;
         }
 
-        Casa casa = this.casas.get(idCasa.trim().toUpperCase());
+        Casa casa = this.casas.get(idCasa.trim());
         if (casa == null) {
             return false;
         }
 
-        Divisao divisao = casa.getDivisaoInterna(idDivisao.trim().toUpperCase());
+        Divisao divisao = casa.getDivisaoInterna(idDivisao.trim());
         if (divisao == null) {
             return false;
         }
 
-        Dispositivo dispositivo = divisao.getDispositivoInterno(idDispositivo.trim().toUpperCase());
+        Dispositivo dispositivo = divisao.getDispositivoInterno(idDispositivo.trim());
         if (dispositivo == null) {
             return false;
         }
@@ -208,17 +240,17 @@ public class DomusControlFacade implements DomusControlLogin, DomusControlCriaca
             return false;
         }
 
-        Casa casa = this.casas.get(idCasa.trim().toUpperCase());
+        Casa casa = this.casas.get(idCasa.trim());
         if (casa == null) {
             return false;
         }
 
-        Divisao divisao = casa.getDivisaoInterna(idDivisao.trim().toUpperCase());
+        Divisao divisao = casa.getDivisaoInterna(idDivisao.trim());
         if (divisao == null) {
             return false;
         }
 
-        Dispositivo dispositivo = divisao.getDispositivoInterno(idDispositivo.trim().toUpperCase());
+        Dispositivo dispositivo = divisao.getDispositivoInterno(idDispositivo.trim());
         if (dispositivo == null) {
             return false;
         }
@@ -237,6 +269,19 @@ public class DomusControlFacade implements DomusControlLogin, DomusControlCriaca
         return utilizador.getCasasUtilizador()
                 .stream()
                 .map(Casa::getIdCasa)
+                .toArray(String[]::new);
+    }
+
+    @Override
+    public String[] getcasasInfoUtilizador(String userID) {
+        Utilizador utilizador = this.utilizadores.get(userID);
+        if (utilizador == null) {
+            return new String[0];
+        }
+
+        return utilizador.getCasasUtilizador()
+                .stream()
+                .map(c -> c.getIdCasa() + " - " + c.getNomeCasa())
                 .toArray(String[]::new);
     }
 

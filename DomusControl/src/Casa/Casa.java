@@ -5,21 +5,28 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Casa {
+
+    private static int proximoId = 0;
+
     private String idCasa;
+    private String nomeCasa;
     private Map<String, Divisao> divisoes;
 
     public Casa() {
-        this.idCasa = "";
+        this.idCasa = String.valueOf(proximoId++);
+        this.nomeCasa = "";
         this.divisoes = new HashMap<>();
     }
 
-    public Casa(String idCasa) {
-        this.idCasa = idCasa;
+    public Casa(String nomeCasa) {
+        this.idCasa = String.valueOf(proximoId++);
+        this.nomeCasa = nomeCasa;
         this.divisoes = new HashMap<>();
     }
 
-    public Casa(String idCasa, Map<String, Divisao> divisoes) {
-        this.idCasa = idCasa;
+    public Casa(String nomeCasa, Map<String, Divisao> divisoes) {
+        this.idCasa = String.valueOf(proximoId++);
+        this.nomeCasa = nomeCasa;
         this.divisoes = divisoes.entrySet()
                 .stream()
                 .collect(Collectors.toMap(
@@ -30,11 +37,16 @@ public class Casa {
 
     public Casa(Casa casa) {
         this.idCasa = casa.getIdCasa();
+        this.nomeCasa = casa.getNomeCasa();
         this.divisoes = casa.getDivisoes();
     }
 
     public String getIdCasa() {
-        return idCasa;
+        return this.idCasa;
+    }
+
+    public String getNomeCasa() {
+        return this.nomeCasa;
     }
 
     public Map<String, Divisao> getDivisoes() {
@@ -76,8 +88,8 @@ public class Casa {
         return this.divisoes.size();
     }
 
-    public void setIdCasa(String idCasa) {
-        this.idCasa = idCasa;
+    public void setNomeCasa(String nomeCasa) {
+        this.nomeCasa = nomeCasa;
     }
 
     public void setDivisoes(Map<String, Divisao> divisoes) {

@@ -8,24 +8,26 @@ import java.util.stream.Collectors;
 
 public class Divisao {
 
+    private static int proximoId = 0;
+
     private String idDivisao;
     private String nome_comum_divisao;
     private List<Dispositivo> dispositivos;
 
     public Divisao() {
-        this.idDivisao = "";
+        this.idDivisao = String.valueOf(proximoId++);
         this.nome_comum_divisao = "";
         this.dispositivos = new ArrayList<>();
     }
 
-    public Divisao(String idDivisao, String nome_comum_divisao) {
-        this.idDivisao = idDivisao;
+    public Divisao(String nome_comum_divisao) {
+        this.idDivisao = String.valueOf(proximoId++);
         this.nome_comum_divisao = nome_comum_divisao;
         this.dispositivos = new ArrayList<>();
     }
 
-    public Divisao(String idDivisao, String nome_comum_divisao, List<Dispositivo> dispositivos) {
-        this.idDivisao = idDivisao;
+    public Divisao(String nome_comum_divisao, List<Dispositivo> dispositivos) {
+        this.idDivisao = String.valueOf(proximoId++);
         this.nome_comum_divisao = nome_comum_divisao;
         this.dispositivos = dispositivos.stream()
                 .map(Dispositivo::clone)
@@ -57,10 +59,6 @@ public class Divisao {
                 .filter(d -> d.getIdentificador().equals(idDispositivo))
                 .findFirst()
                 .orElse(null);
-    }
-
-    public void setIdDivisao(String idDivisao) {
-        this.idDivisao = idDivisao;
     }
 
     public void setNome_comum_divisao(String nome_comum_divisao) {
